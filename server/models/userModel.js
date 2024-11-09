@@ -1,0 +1,73 @@
+import mongoose from "mongoose";
+
+const userSchema = new mongoose.Schema({
+    name:{
+        type:String,
+        required:true
+    },
+    username:{
+        type:String,
+        required:true
+    },
+    email:{
+        type:String,
+        required:true
+    },
+    password:{
+        type:String,
+        default:null
+    },
+    googleId:{
+        type:String,
+        default:null
+    },
+    isVerify:{
+        type:Boolean,
+        default:false
+    },
+    role:{
+        type:String,
+        enum:['user','admin'],
+        default:'user'
+    },
+    image:{
+        publicId:{
+            type:String,
+            default:null
+        },
+        secureUrl:{
+            type:String,
+            default:null
+        },
+    },
+    coverPhoto:{
+        publicId:{
+            type:String,
+            default:null
+        },
+        secureUrl:{
+            type:String,
+            default:null
+        },
+    },
+    friends:[{
+        type:mongoose.Types.ObjectId
+    }],
+    posts:[{
+        type:mongoose.Types.ObjectId
+    }],
+    forgetPasswordToken:{
+        type:String,
+        default:null
+    },
+    forgetPasswordExpires:{
+        type:Date,
+        default:null
+    },
+    verifyEmailToken:{
+        type:String,
+        default:null
+    },
+})
+
+export const userModel = mongoose.model("User",userSchema);
