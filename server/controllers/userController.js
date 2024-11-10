@@ -1,6 +1,7 @@
 import { userModel } from "../models/userModel.js";
 import bcryptjs from "bcryptjs";
 import jwt from 'jsonwebtoken'
+import { sendVerificationLink } from "../utils/nodemailer.js";
 export const signUp = async (req, res) => {
   const { name, email, password, username } = await req.body;
   if (!name || !email || !password || !username) {
@@ -11,7 +12,6 @@ export const signUp = async (req, res) => {
   }
   try {
     const existingUsername = await userModel.findOne({ username });
-    console.log(existingUsername)
     if (existingUsername) {
       return res.status(400).json({
         success: false,
@@ -19,7 +19,6 @@ export const signUp = async (req, res) => {
       });
     }
     const existingUser = await userModel.findOne({ email });
-    console.log(existingUser);
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -28,21 +27,18 @@ export const signUp = async (req, res) => {
     }
     const salt = 8;
     const hashedPassword = await bcryptjs.hash(password, salt);
-    const newUser = userModel.create({
+    const newUser = await userModel.create({
       name,
       email,
       password: hashedPassword,
       username,
-    });
-    console.log(newUser);
-
-    (await newUser).save();
+    })
+    await newUser.save();
     res.status(200).json({
         success:true,
         message:"Registration successfull please login to verify your email."
     })
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -75,12 +71,12 @@ export const signIn = async (req,res) => {
             })
         }
         if(!existingUser.isVerify){
-            return res.status(400).json({
-                success:false,
-                message:"Please verify your email first."
-            })
+            const resp = await sendVerificationLink(existingUser,req,res)
+              return res.status(200).json({
+                success:true,
+                message:"Verification link has been sent please check your email."
+              })
         }
-        console.log(process.env.JWT_SECRET)
         const token = await jwt.sign({_id:existingUser._id,username:existingUser.username,email:existingUser.email,role:existingUser.role,isVerify:existingUser.isVerify,googleId:existingUser.googleId},process.env.JWT_SECRET,{expiresIn:'1h'})
         res.cookie('token',token,{maxAge:36000,httpOnly:true})
         return res.status(200).json({
@@ -89,7 +85,6 @@ export const signIn = async (req,res) => {
           token
         })
     } catch (error) {
-        console.log(error.message)
         res.status(500).json({
             success:false,
             message:"Internal server error"

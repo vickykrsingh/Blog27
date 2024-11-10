@@ -1,10 +1,12 @@
 import nodemailer from 'nodemailer'
 import jwt from 'jsonwebtoken'
-import { userModel } from '../models/userModel';
+import { userModel } from '../models/userModel.js';
 import bcryptjs from 'bcryptjs'
+import dotenv from 'dotenv'
+dotenv.config()
 
-const transporter = nodemailer.createTransport({
-    service:'Gmail',
+const transporter = await nodemailer.createTransport({
+    service: 'gmail',
     auth:{
         user:process.env.EMAIL_USER,
         pass:process.env.EMAIL_PASS
@@ -12,32 +14,34 @@ const transporter = nodemailer.createTransport({
 })
 
 
+
 export const sendVerificationLink = async (user,req,res) => {
     const token = await jwt.sign({_id:user._id},process.env.JWT_SECRET,{expiresIn:'1h'});
-    const verificationLink = `${process.env.CLIENT_URL}/api/auth/verify-email?token=${token}`
+    const verificationLink = `${process.env.BASE_URL}/api/auth/verify-email/${token}`
     const mailOption = {
         from:process.env.EMAIL_USER,
-        to:process.env.EMAIL_PASS,
+        to:user.email,
         subject:"Email verification from BLOG27",
         text:`Verify your email to login to BLOG27 \n Verification link : ${verificationLink}`
     }
-    transporter.sendMail(mailOption,(err,info)=>{
-        if(err){
-            return res.status(400).json({
-                success:false,
-                message:'Email verification failed please try again.'
-            })
-        }
-        return res.status(200).json({
-            success:true,
-            message:"Verification link has been sent please check your email."
+    try {
+        await transporter.sendMail(mailOption,(err,info)=>{
+            if(err){
+                console.log(err,"error occoured")
+            }
         })
-    })
+    } catch (error) {
+        return{
+            success:false,
+            message:"Something went wrong while sending verification link"
+        }
+    }
 }
 
 export const verifyEmail = async (req,res) => {
     try {
         const {token} = req.params;
+        console.log(token)
         const decodedData = jwt.verify(token,process.env.JWT_SECRET);
         const existingUser = await userModel.findById(decodedData._id);
         if(!existingUser){
@@ -74,15 +78,16 @@ export const forgotPassword = async (req,res) => {
             })
         }
         const token = await jwt.sign({_id:user._id},process.env.JWT_SECRET,{expiresIn:'1h'})
-        const resetPasswordLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`
+        const resetPasswordLink = `${process.env.BASE_URL}/reset-password?token=${token}`
         const mailOption = {
             from:process.env.EMAIL_USER,
-            to:process.env.EMAIL_PASS,
+            to:user.email,
             subject:"Reset password of BLOG27",
             text:`Click the link below to reset your password \n ${resetPasswordLink}`
         }
         transporter.sendMail(mailOption,async (err,info)=>{
             if(err){
+                console.log(err)
                 return res.status(400).json({
                     success:false,
                     message:"Something went wrong while sending reset password link in your mail."
@@ -97,6 +102,7 @@ export const forgotPassword = async (req,res) => {
             })
         })
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
             success:false,
             message:"Internal server error."
@@ -140,7 +146,7 @@ export const resetPassword = async (req,res) => {
                 message:"Access denied"
             })
         }
-        if(user.forgetPasswordExpires<Date.now()){
+        if(user.forgetPasswordExpires>Date.now()){
             return res.status(400).json({
                 success:false,
                 messsage:"Token time expired"
