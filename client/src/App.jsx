@@ -1,22 +1,10 @@
-import { Button } from "@/components/ui/button"
-import { useEffect } from "react"
-import { axiosInstance } from "./lib/axiosInstance"
+import { Routes,Route } from "react-router";
+import Home from "./pages/Home";
 
 export default function App() {
-  const fetchAxiosInstance = async () => {
-    try {
-      const {data} = await axiosInstance.get('/api/v1/demo');
-      console.log(data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  useEffect(()=>{
-    fetchAxiosInstance()
-  },[])
   return (
-    <div>
-      <Button>Click me</Button>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home/>}/>
+    </Routes>
   )
 }
