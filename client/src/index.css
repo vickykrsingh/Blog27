@@ -5,6 +5,12 @@
 .main-container{
   @apply w-full min-h-[90vh] px-3 md:px-5 lg:px-10
 }
-.button{
-  @apply bg-primary text-secondary hover:bg-primary-light hover:text-secondary-light duration-300
+.button-primary{
+  @apply bg-primary text-secondary hover:bg-secondary hover:text-primary duration-300 border-primary border-2
+}
+.button-secondary{
+  @apply bg-secondary text-primary hover:bg-primary hover:text-secondary duration-300 border-secondary border-2
+}
+.transparent-input{
+  @apply bg-transparent border-b-2 border-primary px-2 py-1 outline-none hover:border-green-800 duration-300 hover:placeholder:text-green-700
 }

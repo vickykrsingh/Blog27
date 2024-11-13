@@ -9,6 +9,10 @@ function Navbar() {
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
+  const handleLogout = async () => {
+    console.log('hello world')
+  }
+
   return (
     <nav className="bg-primary">
       <div className="flex flex-wrap items-center justify-between mx-auto p-4">
@@ -23,19 +27,20 @@ function Navbar() {
         </Link>
 
         <div className="flex items-center md:order-2 space-x-3 rtl:space-x-reverse">
-          <button
+          {/* <button
             type="button"
             onClick={toggleDropdown}
             className="flex text-sm bg-primary-light text-secondary rounded-full w-10 h-10 focus:ring-secondary-light z-20"
             aria-expanded={dropdownOpen}
           >
-            {/* <span className="sr-only">Open user menu</span> */}
             <img
               className="w-10 h-10 rounded-full"
               src="/avatar.png" 
               alt="user photo"
             />
-          </button>
+          </button> */}
+
+          <Link to={'/sign-in'} className="button-secondary px-3 py-1 rounded-md text-sm">Get Started</Link>
 
           {dropdownOpen && (
             <div
@@ -50,35 +55,19 @@ function Navbar() {
               <ul className="py-2 text-gray-200">
                 <li>
                   <Link
-                    to="#"
-                    className="block px-4 py-2 text-sm hover:bg-secondary-light"
-                  >
-                    Dashboard
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="#"
+                    to="/settings"
                     className="block px-4 py-2 text-sm hover:bg-secondary-light"
                   >
                     Settings
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="#"
-                    className="block px-4 py-2 text-sm hover:bg-secondary-light"
-                  >
-                    Earnings
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="#"
+                  <button
+                    onClick={handleLogout}
                     className="block px-4 py-2 text-sm hover:bg-secondary-light"
                   >
                     Sign out
-                  </Link>
+                  </button>
                 </li>
               </ul>
             </div>
@@ -119,7 +108,7 @@ function Navbar() {
           <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-primary md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-primary">
             <li>
               <Link
-                to="#"
+                to="/"
                 className="block py-4 px-3 text-secondary rounded md:bg-transparent md:text-secondary md:p-0"
                 aria-current="page"
               >
@@ -128,7 +117,15 @@ function Navbar() {
             </li>
             <li>
               <Link
-                to="#"
+                to="/stories"
+                className="block py-2 px-3 text-secondary rounded md:hover:bg-transparent md:hover:text-primary-light md:p-0"
+              >
+                Stories
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/about"
                 className="block py-2 px-3 text-secondary rounded md:hover:bg-transparent md:hover:text-primary-light md:p-0"
               >
                 About
@@ -136,23 +133,7 @@ function Navbar() {
             </li>
             <li>
               <Link
-                to="#"
-                className="block py-2 px-3 text-secondary rounded md:hover:bg-transparent md:hover:text-primary-light md:p-0"
-              >
-                Services
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
-                className="block py-2 px-3 text-secondary rounded md:hover:bg-transparent md:hover:text-primary-light md:p-0"
-              >
-                Pricing
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
+                to="/contact"
                 className="block py-2 px-3 text-secondary rounded md:hover:bg-transparent md:hover:text-primary-light md:p-0"
               >
                 Contact
