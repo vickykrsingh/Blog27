@@ -14,7 +14,7 @@ export default function App() {
       <Route path="/" element={<Home/>}/>
       <Route path="/sign-in" element={<Signin/>}/>
       <Route path="/sign-up" element={<Signup/>}/>
-      <Route path="/reset-password" element={<ResetPassword/>}/>
+      <Route path="/reset-password/:token" element={<ResetPassword/>}/>
       <Route path="/forgot-password" element={<ForgotPassword/>}/>
       <Route path="/email-verified" element={<EmailVerified/>}/>
       <Route path="/google-login-failure" element={<GoogleLoginFailure/>}/>

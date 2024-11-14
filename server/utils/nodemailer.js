@@ -41,7 +41,6 @@ export const sendVerificationLink = async (user,req,res) => {
 export const verifyEmail = async (req,res) => {
     try {
         const {token} = req.params;
-        console.log(token)
         const decodedData = jwt.verify(token,process.env.JWT_SECRET);
         const existingUser = await userModel.findById(decodedData._id);
         if(!existingUser){
@@ -51,6 +50,7 @@ export const verifyEmail = async (req,res) => {
             })
         }
         existingUser.isVerify=true;
+        existingUser.verifyEmailToken=null
         await existingUser.save()
         res.redirect(`${process.env.CLIENT_URL}/email-verified`)
     } catch (error) {
@@ -78,7 +78,7 @@ export const forgotPassword = async (req,res) => {
             })
         }
         const token = await jwt.sign({_id:user._id},process.env.JWT_SECRET,{expiresIn:'1h'})
-        const resetPasswordLink = `${process.env.BASE_URL}/reset-password?token=${token}`
+        const resetPasswordLink = `${process.env.CLIENT_URL}/reset-password/${token}`
         const mailOption = {
             from:process.env.EMAIL_USER,
             to:user.email,
@@ -87,7 +87,6 @@ export const forgotPassword = async (req,res) => {
         }
         transporter.sendMail(mailOption,async (err,info)=>{
             if(err){
-                console.log(err)
                 return res.status(400).json({
                     success:false,
                     message:"Something went wrong while sending reset password link in your mail."
@@ -102,7 +101,6 @@ export const forgotPassword = async (req,res) => {
             })
         })
     } catch (error) {
-        console.log(error)
         return res.status(500).json({
             success:false,
             message:"Internal server error."
@@ -155,9 +153,11 @@ export const resetPassword = async (req,res) => {
 
         const hashedPassword = await bcryptjs.hash(password,8);
         user.password=hashedPassword;
+        user.forgetPasswordExpires=Date.now()
+        user.forgetPasswordToken=null
         await user.save()
         return res.status(200).json({
-            success:false,
+            success:true,
             message:"Password modified successfully."
         })
 

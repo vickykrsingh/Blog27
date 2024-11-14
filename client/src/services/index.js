@@ -9,3 +9,13 @@ export const signUpService = async (formData) => {
     const {data} = await axiosInstance.post('/api/auth/sign-up',formData)
     return data;
 }
+
+export const forgotPasswordService = async (formData) => {
+    const {data} = await axiosInstance.post('/api/auth/forgot-password',formData);
+    return data;
+}
+
+export const resetPasswordService = async (formData,token) => {
+    const {data} = await axiosInstance.post(`/api/auth/reset-password/${token}`,formData);
+    return data;
+}
