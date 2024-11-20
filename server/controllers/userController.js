@@ -77,12 +77,17 @@ export const signIn = async (req,res) => {
                 message:"Verification link has been sent please check your email."
               })
         }
-        const token = await jwt.sign({_id:existingUser._id},process.env.JWT_SECRET,{expiresIn:'1h'})
+        const token = await jwt.sign({_id:existingUser._id,name:existingUser.name,email:existingUser.email,username:existingUser.username},process.env.JWT_SECRET,{expiresIn:'1h'})
         res.cookie('token',token,{maxAge:3600000,httpOnly:true,secure:false})
         return res.status(200).json({
           success:true,
           message:"login successfully",
-          token
+          user:{
+            _id:existingUser._id,
+            name:existingUser.name,
+            email:existingUser.email,
+            username:existingUser.username
+          }
         })
     } catch (error) {
         res.status(500).json({

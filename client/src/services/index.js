@@ -19,3 +19,13 @@ export const resetPasswordService = async (formData,token) => {
     const {data} = await axiosInstance.post(`/api/auth/reset-password/${token}`,formData);
     return data;
 }
+
+export const checkAuthService = async () => {
+    const {data} = await axiosInstance.get('/api/auth/check-auth');
+    return data;
+}
+
+export const logoutService = async () => {
+    const {data} = await axiosInstance.get('/api/auth/logout');
+    return data;
+}

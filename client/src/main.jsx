@@ -5,6 +5,7 @@ import MainLayout from "./layout/MainLayout";
 import { BrowserRouter } from "react-router-dom";
 import {Provider} from 'react-redux'
 import { store } from "./redux/store.js";
+import AuthCheckLayout from "./layout/AuthCheckLayout.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter future={{
@@ -12,9 +13,11 @@ createRoot(document.getElementById("root")).render(
     v7_startTransition:true
   }}>
     <Provider store={store}>
+    <AuthCheckLayout>
     <MainLayout>
       <App />
     </MainLayout>
+    </AuthCheckLayout>
     </Provider>
   </BrowserRouter>
 );

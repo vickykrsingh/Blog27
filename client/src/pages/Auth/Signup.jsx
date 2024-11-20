@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState,useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { signUpService } from "../../services";
 import { toast } from "react-toastify";
 import GoogleLogin from "./GoogleLogin";
+import { useSelector } from "react-redux";
 
 function SignUp() {
   const [data, setData] = useState({
@@ -11,6 +12,8 @@ function SignUp() {
     email: "",
     password: "",
   });
+  const {user} = useSelector((state)=>state.Auth)
+  const navigate = useNavigate()
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -18,6 +21,7 @@ function SignUp() {
       console.log(resp);
       if (resp.success) {
         toast.success(resp.message);
+        navigate('/sign-in')
       }
     } catch (error) {
       toast.error(error.response.data.message);
@@ -29,6 +33,11 @@ function SignUp() {
       [e.target.name]: e.target.value,
     });
   };
+  useEffect(()=>{
+    if(user.user){
+      navigate('/')
+    }
+  },[])
   return (
     <main className="main-container flex items-center justify-center">
       <form
